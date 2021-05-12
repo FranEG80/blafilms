@@ -1,3 +1,4 @@
+import React from 'react'
 import DivElement from "../../atom/DivElement"
 import Image from "../../atom/Image"
 
@@ -11,4 +12,4 @@ const CardItem = ({Poster, Title, Type, Year}) => (
     </DivElement>
 )
 
-export default CardItem
+export default React.memo(CardItem, (prev, next) => prev.Title === next.Title && prev.Year === next.Year && prev.Poster === next.Poster )

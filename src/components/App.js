@@ -4,34 +4,59 @@ import DivElement from './atom/DivElement'
 import SearchBar from './molecule/SearchBar'
 import NoResults from './molecule/NoResults/NoResults'
 import ResultsSearch from './molecule/ResultsSearch'
+import { getFilms } from '../services/getData'
+import ActivityIndicator from './molecule/ActivityIndicator'
+import Modal from './molecule/Modal'
+import useSearchFilms, { INITIAL_PAGE } from './useSearchFilms'
 
 function App() {
-  const [searchResult, setSearchResult] = useState()
+  const [isLoading, setIsLoading] = useState(false)
+  const [param, setParam] = useState('')
 
-  useEffect(() => {
-    const search = async () => {
-      const response = await fetch(
-        'http://www.omdbapi.com/?apikey=a461e386&s=king&page=1',
-      )
+  const {data: searchResult, error, actualPage, hasMore, receivedData, resetData, handleChangePage} = useSearchFilms()
+  
 
-      const data = await response.json()
-
-      if (!searchResult) {
-        setSearchResult(data)
-      }
+  useEffect(()=> {
+    if (param !== '') {
+      setIsLoading(true) 
     }
+    if (param === '') {
+      setIsLoading(false)
+      resetData()
+    }
+  }, [param, resetData, actualPage])
 
-    search()
-  })
+  useEffect(()=> {
+    if (isLoading) {
+      const search = async () => {
+        const response = await getFilms({search: param, p: actualPage})
+        receivedData({...response, actualPage})
+        setIsLoading(false)
+      }
+      search()
+    }
+  }, [isLoading, param, actualPage, receivedData])
+
+  const handleSearch = (value) => setParam(value)
 
   return (
     <DivElement className="App">
-      <SearchBar/>
-      {!searchResult ? (
-        <NoResults />
-      ) : (
-        <ResultsSearch searchResult={searchResult} />
-      )}
+      <SearchBar onChange={handleSearch} btnDisabled={isLoading}/>
+      {error && <Modal error message={error} />}
+      {!isLoading && !searchResult && <NoResults/> }
+      {isLoading && <ActivityIndicator/>}
+      {
+        !isLoading && (
+          searchResult.length === 0
+            ? <NoResults param={param}/>
+            : <ResultsSearch 
+                searchResult={searchResult} 
+                hasMore={hasMore} 
+                hasLess={actualPage > INITIAL_PAGE} 
+                onChangePage={(toPlus)=> handleChangePage({toPlus})}
+              />
+        )
+      }
     </DivElement>
   )
 }

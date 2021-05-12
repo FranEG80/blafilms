@@ -1,9 +1,10 @@
 
-const Button = ({children, style, className, onPress} = {}) => (
+const Button = ({children,  className, onPress, disabled} = {}) => (
     <button
         className={className}
-        style={style}
-        onPress
+        style={disabled ? {opacity: 0.7} : {}}
+        onClick={onPress}
+        disabled={disabled}
     >
         {children}
     </button>

@@ -1,0 +1,22 @@
+.modal-container {
+    display: grid;
+    grid-template-columns: 25% 50% 25%;
+}
+
+.modal {
+    grid-column-start: 2;
+    padding: 20px;
+    border-radius:  0 5px 5px 0;
+}
+
+.error {
+    background-color: rgba(218, 113, 113, 0.5);
+}
+
+.warn {
+    background-color: rgba(218, 154, 94, 0.5);
+}
+
+.success {
+    background-color: rgba(111, 178, 241, 0.5);
+}
