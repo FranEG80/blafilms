@@ -41,10 +41,10 @@ function App() {
 
   return (
     <DivElement className="App">
+      {isLoading && <ActivityIndicator/>}
       <SearchBar onChange={handleSearch} btnDisabled={isLoading}/>
       {error && <Modal error message={error} />}
       {!isLoading && !searchResult && <NoResults/> }
-      {isLoading && <ActivityIndicator/>}
       {
         !isLoading && (
           searchResult.length === 0
